@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { restoreCafe24Cart, generateOrderformUrl } from '@/lib/cafe24';
 
