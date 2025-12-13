@@ -292,15 +292,22 @@ export default function CartList({ filters, onSelectionChange, onEstimatedRevenu
                     <td className="px-4 py-3">{getStatusBadge(cart.status)}</td>
                     <td className="px-4 py-3">
                       {cart.sent_count && cart.sent_count > 0 ? (
-                        <div>
-                          <span className="text-blue-600 text-xs font-semibold">
-                            ✓ {cart.sent_count}회
-                          </span>
-                        </div>
+                        <span className="text-blue-600 text-xs font-semibold">
+                          ✓ 발송완료
+                        </span>
                       ) : cart.status === 'purchased' ? (
                         <span className="text-gray-400 text-xs">구매완료</span>
                       ) : (
                         <span className="text-gray-500 text-xs">미발송</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {cart.sent_count && cart.sent_count > 0 ? (
+                        <span className="text-blue-600 text-xs font-semibold">
+                          {cart.sent_count}회
+                        </span>
+                      ) : (
+                        <span className="text-gray-500 text-xs">0회</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
