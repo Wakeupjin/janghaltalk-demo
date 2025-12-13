@@ -98,9 +98,17 @@ export default function CartsPage() {
           </div>
 
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              📦 장바구니 목록
-            </h1>
+            <div className="flex items-center justify-between mb-2">
+              <h1 className="text-3xl font-bold text-gray-900">
+                📦 장바구니 목록
+              </h1>
+              <Link
+                href="/preview?name=홍길동&product=명품가방&amount=240000&monthly=20000"
+                className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-sm"
+              >
+                👁️ 알림톡 A/B 미리보기
+              </Link>
+            </div>
             <p className="text-gray-600">
               카페24 장바구니 목록에서 타겟팅할 고객을 선택하여 알림톡을 발송하세요
             </p>

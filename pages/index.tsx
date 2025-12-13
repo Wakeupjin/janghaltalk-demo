@@ -50,6 +50,12 @@ export default function Home() {
             >
               📦 장바구니 목록
             </Link>
+            <Link
+              href="/preview?name=홍길동&product=명품가방&amount=240000&monthly=20000"
+              className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+            >
+              👁️ 알림톡 A/B 미리보기
+            </Link>
             <button
               onClick={async () => {
                 if (confirm('초기 샘플 데이터를 생성하시겠습니까? (기존 데이터는 유지됩니다)')) {
