@@ -38,8 +38,8 @@ export default function PreviewPage() {
         <main className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <p className="text-gray-600 mb-4">데이터를 불러올 수 없습니다.</p>
-            <Link href="/simulate" className="text-gray-900 underline">
-              알림톡 발송으로 돌아가기
+            <Link href="/" className="text-gray-900 underline">
+              대시보드로 돌아가기
             </Link>
           </div>
         </main>
@@ -67,10 +67,10 @@ export default function PreviewPage() {
         <div className="container mx-auto px-4">
           <div className="mb-6">
             <Link
-              href="/simulate"
+              href="/"
               className="text-gray-700 hover:text-gray-900 font-medium"
             >
-              ← 알림톡 발송으로 돌아가기
+              ← 대시보드로 돌아가기
             </Link>
           </div>
 
