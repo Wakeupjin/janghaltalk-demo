@@ -1,0 +1,254 @@
+import { useState } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+
+export default function SettingsPage() {
+  const [settings, setSettings] = useState({
+    // 알림톡 발송 설정
+    enabled: true,
+    sendTiming: '30', // 분 단위
+    maxRetries: 1,
+    
+    // 메시지 설정
+    messageVersion: 'B', // A 또는 B
+    customMessage: '',
+    
+    // 알림톡 발송 조건
+    minCartAmount: 0,
+    excludeProducts: '',
+  });
+
+  const [saved, setSaved] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    
+    setSettings((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: 실제로는 API로 설정 저장
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
+
+  return (
+    <>
+      <Head>
+        <title>장할톡 - 설정</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <main className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8 max-w-4xl">
+          <div className="mb-6">
+            <Link
+              href="/"
+              className="text-gray-700 hover:text-gray-900 font-medium"
+            >
+              ← 대시보드로 돌아가기
+            </Link>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              ⚙️ 설정
+            </h1>
+            <p className="text-gray-600 mb-8">
+              장할톡 알림톡 발송 설정을 관리하세요
+            </p>
+
+            {saved && (
+              <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                <p className="text-green-800 font-semibold">
+                  ✅ 설정이 저장되었습니다
+                </p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* 기본 설정 */}
+              <section>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  📱 알림톡 발송 설정
+                </h2>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div>
+                      <label htmlFor="enabled" className="block text-sm font-medium text-gray-900 mb-1">
+                        알림톡 자동 발송
+                      </label>
+                      <p className="text-xs text-gray-500">
+                        장바구니 이탈 시 자동으로 알림톡을 발송합니다
+                      </p>
+                    </div>
+                    <input
+                      type="checkbox"
+                      id="enabled"
+                      name="enabled"
+                      checked={settings.enabled}
+                      onChange={handleChange}
+                      className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="sendTiming" className="block text-sm font-medium text-gray-700 mb-2">
+                      발송 타이밍 (장바구니 추가 후 경과 시간)
+                    </label>
+                    <select
+                      id="sendTiming"
+                      name="sendTiming"
+                      value={settings.sendTiming}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-500"
+                    >
+                      <option value="30">30분 후</option>
+                      <option value="60">1시간 후</option>
+                      <option value="120">2시간 후</option>
+                      <option value="1440">다음날</option>
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">
+                      장바구니에 상품을 담은 후 지정한 시간이 지나도 구매하지 않으면 알림톡이 발송됩니다
+                    </p>
+                  </div>
+
+                  <div>
+                    <label htmlFor="maxRetries" className="block text-sm font-medium text-gray-700 mb-2">
+                      재시도 횟수
+                    </label>
+                    <select
+                      id="maxRetries"
+                      name="maxRetries"
+                      value={settings.maxRetries}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-500"
+                    >
+                      <option value="0">재시도 안함</option>
+                      <option value="1">1회 재시도</option>
+                      <option value="2">2회 재시도</option>
+                    </select>
+                  </div>
+                </div>
+              </section>
+
+              {/* 메시지 설정 */}
+              <section>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  💬 메시지 설정
+                </h2>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="messageVersion" className="block text-sm font-medium text-gray-700 mb-2">
+                      메시지 버전
+                    </label>
+                    <select
+                      id="messageVersion"
+                      name="messageVersion"
+                      value={settings.messageVersion}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-500"
+                    >
+                      <option value="A">버전 A (기존 - 분할 결제 느낌)</option>
+                      <option value="B">버전 B (세련된 - 부담 없이 느낌)</option>
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">
+                      미리보기 페이지에서 두 버전을 비교해보세요
+                    </p>
+                  </div>
+
+                  <div>
+                    <label htmlFor="customMessage" className="block text-sm font-medium text-gray-700 mb-2">
+                      커스텀 메시지 (선택사항)
+                    </label>
+                    <textarea
+                      id="customMessage"
+                      name="customMessage"
+                      value={settings.customMessage}
+                      onChange={handleChange}
+                      rows={4}
+                      placeholder="기본 메시지에 추가할 커스텀 메시지를 입력하세요"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-500"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      비워두면 기본 메시지가 사용됩니다
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* 발송 조건 */}
+              <section>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  🎯 발송 조건
+                </h2>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label htmlFor="minCartAmount" className="block text-sm font-medium text-gray-700 mb-2">
+                      최소 장바구니 금액 (원)
+                    </label>
+                    <input
+                      type="number"
+                      id="minCartAmount"
+                      name="minCartAmount"
+                      value={settings.minCartAmount}
+                      onChange={handleChange}
+                      min="0"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-500"
+                      placeholder="0"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      이 금액 이상인 장바구니에만 알림톡을 발송합니다 (0원 = 제한 없음)
+                    </p>
+                  </div>
+
+                  <div>
+                    <label htmlFor="excludeProducts" className="block text-sm font-medium text-gray-700 mb-2">
+                      제외할 상품명 (쉼표로 구분)
+                    </label>
+                    <input
+                      type="text"
+                      id="excludeProducts"
+                      name="excludeProducts"
+                      value={settings.excludeProducts}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-gray-500"
+                      placeholder="예: 무료배송, 샘플"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      이 상품명이 포함된 장바구니에는 알림톡을 발송하지 않습니다
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* 저장 버튼 */}
+              <div className="flex gap-3 pt-6 border-t border-gray-200">
+                <button
+                  type="submit"
+                  className="flex-1 bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+                >
+                  💾 설정 저장
+                </button>
+                <Link
+                  href="/"
+                  className="flex-1 bg-gray-200 text-gray-900 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors text-center"
+                >
+                  취소
+                </Link>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </>
+  );
+}
+
