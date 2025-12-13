@@ -61,11 +61,16 @@ export default async function handler(
         | { count: number }
         | undefined;
 
+      // Mock 장바구니에 이미 sent_count가 있으면 그것을 사용, 없으면 DB에서 조회
+      // DB 조회 결과가 없으면 Mock 데이터의 sent_count 사용 (이미 cafe24.ts에서 생성됨)
+      const finalSentCount = sentCount?.count || cart.sent_count || 0;
+      const finalSentAt = sentHistory?.sent_at || cart.notified_at || null;
+
       return {
         ...cart,
-        sent_at: sentHistory?.sent_at || null,
-        notified_status: sentHistory?.status || null,
-        sent_count: sentCount?.count || 0,
+        sent_at: finalSentAt,
+        notified_status: finalSentAt ? 'sent' : null,
+        sent_count: finalSentCount,
       };
     });
 

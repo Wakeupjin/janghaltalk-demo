@@ -16,6 +16,7 @@ export interface Cafe24Cart {
   sent_at?: string | null;
   notified_status?: string | null;
   sent_count?: number; // 발송 횟수
+  notified_at?: string | null; // 발송 시간
   // 페르소나 정보
   customer_grade?: string; // 고객 등급
   purchase_history_count?: number; // 구매 이력 건수
@@ -182,6 +183,28 @@ export async function getCafe24Carts(
         lastPurchaseDate = lastPurchase.toISOString();
       }
       
+      // 발송 이력 랜덤 생성 (더 현실적으로)
+      let sentCount = 0;
+      let notifiedAt: string | undefined = undefined;
+      
+      if (status === 'pending') {
+        // 이탈 상태: 30% 확률로 발송됨, 발송된 경우 1-2회
+        if (Math.random() < 0.3) {
+          sentCount = Math.floor(Math.random() * 2) + 1; // 1-2회
+          const notifiedTime = new Date(addedAt);
+          notifiedTime.setHours(notifiedTime.getHours() + Math.floor(Math.random() * hoursAgo));
+          notifiedAt = notifiedTime.toISOString();
+        }
+      } else if (status === 'purchased') {
+        // 구매 완료: 70% 확률로 발송됨, 발송된 경우 1-3회
+        if (Math.random() < 0.7) {
+          sentCount = Math.floor(Math.random() * 3) + 1; // 1-3회
+          const notifiedTime = new Date(addedAt);
+          notifiedTime.setHours(notifiedTime.getHours() + Math.floor(Math.random() * hoursAgo));
+          notifiedAt = notifiedTime.toISOString();
+        }
+      }
+
       carts.push({
         cart_no: `CART_${1000 + i}`,
         customer_name: randomName,
@@ -198,6 +221,9 @@ export async function getCafe24Carts(
         last_purchase_date: lastPurchaseDate,
         preferred_category: preferredCategory,
         average_order_amount: averageOrderAmount,
+        // 발송 이력 정보
+        sent_count: sentCount,
+        notified_at: notifiedAt,
       });
     }
     
