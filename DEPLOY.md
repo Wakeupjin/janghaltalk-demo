@@ -36,6 +36,29 @@ git push -u origin main
 
 예: `https://janghaltalk-demo.vercel.app`
 
+### 3-1. Vercel 프로젝트를 Public으로 설정 (공개 접근 허용)
+
+1. Vercel 대시보드 → 프로젝트 선택
+2. Settings → General
+3. "Visibility" 섹션에서 **"Public"** 선택
+4. 저장
+
+이렇게 하면 회원가입 없이 링크로 접근할 수 있습니다.
+
+## 3-2. Netlify로 배포 (대안 - 기본적으로 공개)
+
+Netlify는 기본적으로 공개 접근이 가능합니다.
+
+1. [Netlify](https://www.netlify.com) 접속 및 GitHub 계정 연동
+2. "Add new site" → "Import an existing project"
+3. GitHub 저장소 선택: `Wakeupjin/janghaltalk-demo`
+4. 빌드 설정 (자동 감지됨):
+   - Build command: `npm run build`
+   - Publish directory: `.next`
+5. "Deploy site" 클릭
+
+배포 완료 후 `https://janghaltalk-demo.netlify.app` 형태의 URL이 생성되며, 누구나 접근 가능합니다.
+
 ## 4. 데이터베이스 주의사항
 
 ⚠️ **중요**: Vercel은 서버리스 환경이므로 SQLite 파일이 영구 저장되지 않습니다.
