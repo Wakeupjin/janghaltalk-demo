@@ -245,11 +245,6 @@ export default function CartList({ filters, onSelectionChange, onEstimatedRevenu
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900">
                       <div className="font-medium">{cart.customer_name}</div>
-                      {cart.customer_grade && (
-                        <div className="text-xs text-gray-500 mt-0.5">
-                          {cart.customer_grade}
-                        </div>
-                      )}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
                       {cart.customer_phone}
@@ -261,19 +256,9 @@ export default function CartList({ filters, onSelectionChange, onEstimatedRevenu
                           외 {cart.item_count - 1}건
                         </span>
                       )}
-                      {cart.preferred_category && (
-                        <div className="text-xs text-gray-500 mt-0.5">
-                          선호: {cart.preferred_category}
-                        </div>
-                      )}
                     </td>
                     <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                      <div>{formatCurrency(cart.total_amount)}</div>
-                      {cart.average_order_amount && (
-                        <div className="text-xs text-gray-500 mt-0.5">
-                          평균: {formatCurrency(cart.average_order_amount)}
-                        </div>
-                      )}
+                      {formatCurrency(cart.total_amount)}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
                       {formatDate(cart.added_at)}
@@ -312,18 +297,6 @@ export default function CartList({ filters, onSelectionChange, onEstimatedRevenu
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
                       {cart.sent_at ? formatDate(cart.sent_at) : '-'}
-                    </td>
-                    <td className="px-4 py-3 text-xs text-gray-600">
-                      {cart.purchase_history_count !== undefined && (
-                        <div className="space-y-0.5">
-                          <div>구매 {cart.purchase_history_count}회</div>
-                          {cart.last_purchase_date && (
-                            <div className="text-gray-500">
-                              최근: {formatDate(cart.last_purchase_date)}
-                            </div>
-                          )}
-                        </div>
-                      )}
                     </td>
                   </tr>
                 );
