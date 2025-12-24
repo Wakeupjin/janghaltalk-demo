@@ -147,7 +147,7 @@ export default function SettingsPage() {
                             href="/api/auth/cafe24/login"
                             className="bg-gray-900 text-white px-6 py-2 rounded font-semibold hover:bg-gray-800 transition-colors whitespace-nowrap"
                           >
-                            🔗 카페24 연결하기
+                            카페24 연결하기
                           </Link>
                         )}
                       </div>
@@ -158,6 +158,12 @@ export default function SettingsPage() {
                     <p>• 카페24 쇼핑몰을 연결하면 실제 장바구니 데이터를 조회할 수 있습니다</p>
                     <p>• 연결 시 다음 권한이 필요합니다: 주문 조회, 고객 정보 조회, 상품 정보 조회</p>
                     <p>• 연결은 안전하게 OAuth 2.0 방식으로 진행됩니다</p>
+                    <p className="mt-2 text-xs text-gray-500">
+                      "계정이 생성 중 입니다" 페이지가 나타나면 카페24 개발자 센터에서 앱 등록이 필요합니다. 
+                      <Link href="https://github.com/Wakeupjin/janghaltalk-demo/blob/main/CAFE24_SETUP.md" target="_blank" className="underline">
+                        설정 가이드 보기
+                      </Link>
+                    </p>
                   </div>
                 </div>
               </section>
