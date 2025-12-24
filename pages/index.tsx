@@ -1,10 +1,38 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Dashboard from '@/components/Dashboard';
 import TossBranding from '@/components/TossBranding';
 
 export default function Home() {
+  const router = useRouter();
+  const [cafe24Status, setCafe24Status] = useState<{
+    connected: boolean;
+    mall_id?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    // URL 파라미터에서 연결 성공/실패 메시지 확인
+    if (router.query.connected === 'true') {
+      alert('✅ 카페24 연결이 완료되었습니다!');
+      router.replace('/', undefined, { shallow: true });
+    }
+    if (router.query.error) {
+      alert(`❌ 연결 실패: ${decodeURIComponent(router.query.error as string)}`);
+      router.replace('/', undefined, { shallow: true });
+    }
+
+    // 카페24 연결 상태 확인
+    fetch('/api/auth/cafe24/status')
+      .then((res) => res.json())
+      .then((data) => setCafe24Status(data))
+      .catch((error) => {
+        console.error('카페24 상태 확인 실패:', error);
+        setCafe24Status({ connected: false });
+      });
+  }, [router.query]);
+
   return (
     <>
       <Head>
@@ -36,6 +64,53 @@ export default function Home() {
               <span>토스페이먼츠 장할특 결제수단 연동</span>
             </div>
           </div>
+
+          {/* 카페24 연결 상태 표시 */}
+          {cafe24Status && (
+            <div className={`mb-6 p-4 rounded-lg border-2 ${
+              cafe24Status.connected
+                ? 'bg-green-50 border-green-200'
+                : 'bg-yellow-50 border-yellow-200'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {cafe24Status.connected ? (
+                    <>
+                      <span className="text-2xl">✅</span>
+                      <div>
+                        <p className="font-semibold text-gray-900">
+                          카페24 연결됨
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          쇼핑몰 ID: {cafe24Status.mall_id}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-2xl">⚠️</span>
+                      <div>
+                        <p className="font-semibold text-gray-900">
+                          카페24 미연결
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          카페24 쇼핑몰을 연결하여 실제 장바구니 데이터를 사용하세요
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+                {!cafe24Status.connected && (
+                  <Link
+                    href="/api/auth/cafe24/login"
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap"
+                  >
+                    🔗 카페24 연결하기
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
 
           <div className="mb-6 flex gap-3 flex-wrap">
             <Link

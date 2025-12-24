@@ -1,8 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 
 export default function SettingsPage() {
+  const [cafe24Status, setCafe24Status] = useState<{
+    connected: boolean;
+    mall_id?: string;
+    shop_no?: string;
+    updated_at?: string;
+  } | null>(null);
+
+  useEffect(() => {
+    // 카페24 연결 상태 확인
+    fetch('/api/auth/cafe24/status')
+      .then((res) => res.json())
+      .then((data) => setCafe24Status(data))
+      .catch((error) => {
+        console.error('카페24 상태 확인 실패:', error);
+        setCafe24Status({ connected: false });
+      });
+  }, []);
+
   const [settings, setSettings] = useState({
     // 알림톡 발송 설정
     enabled: true,
@@ -71,6 +89,72 @@ export default function SettingsPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-8">
+              {/* 카페24 연결 설정 */}
+              <section>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  🔗 카페24 연결
+                </h2>
+                
+                <div className="space-y-4">
+                  {cafe24Status && (
+                    <div className={`p-4 rounded-lg border-2 ${
+                      cafe24Status.connected
+                        ? 'bg-green-50 border-green-200'
+                        : 'bg-yellow-50 border-yellow-200'
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          {cafe24Status.connected ? (
+                            <>
+                              <span className="text-2xl">✅</span>
+                              <div>
+                                <p className="font-semibold text-gray-900">
+                                  카페24 연결됨
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  쇼핑몰 ID: {cafe24Status.mall_id}
+                                </p>
+                                {cafe24Status.updated_at && (
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    연결 시간: {new Date(cafe24Status.updated_at).toLocaleString('ko-KR')}
+                                  </p>
+                                )}
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-2xl">⚠️</span>
+                              <div>
+                                <p className="font-semibold text-gray-900">
+                                  카페24 미연결
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  카페24 쇼핑몰을 연결하여 실제 장바구니 데이터를 사용하세요
+                                </p>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        {!cafe24Status.connected && (
+                          <Link
+                            href="/api/auth/cafe24/login"
+                            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap"
+                          >
+                            🔗 카페24 연결하기
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p>• 카페24 쇼핑몰을 연결하면 실제 장바구니 데이터를 조회할 수 있습니다</p>
+                    <p>• 연결 시 다음 권한이 필요합니다: 주문 조회, 고객 정보 조회, 상품 정보 조회</p>
+                    <p>• 연결은 안전하게 OAuth 2.0 방식으로 진행됩니다</p>
+                  </div>
+                </div>
+              </section>
+
               {/* 기본 설정 */}
               <section>
                 <h2 className="text-xl font-bold text-gray-900 mb-4">
