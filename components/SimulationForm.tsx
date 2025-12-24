@@ -106,7 +106,7 @@ export default function SimulationForm() {
       {success && (
         <div className="bg-gray-50 border border-gray-300 rounded-lg p-4">
           <p className="text-gray-900 font-semibold">
-            ✅ 알림톡이 성공적으로 발송되었습니다!
+            알림톡이 성공적으로 발송되었습니다.
           </p>
           <p className="text-gray-600 text-sm mt-1">
             대시보드로 이동합니다...
@@ -116,7 +116,7 @@ export default function SimulationForm() {
 
       {error && (
         <div className="bg-gray-50 border border-gray-300 rounded-lg p-4">
-          <p className="text-gray-900 font-semibold">❌ 오류</p>
+          <p className="text-gray-900 font-semibold">오류</p>
           <p className="text-gray-600 text-sm mt-1">{error}</p>
         </div>
       )}
@@ -193,7 +193,7 @@ export default function SimulationForm() {
 
       {totalAmount > 0 && (
         <div className="bg-gray-50 border border-gray-300 rounded-lg p-4">
-          <p className="text-sm text-gray-600 mb-2">💡 계산 결과</p>
+          <p className="text-sm font-medium text-gray-700 mb-2">계산 결과</p>
           <div className="space-y-1">
             <p className="text-lg font-semibold text-gray-900">
               총 금액: {totalAmount.toLocaleString()}원
@@ -213,16 +213,16 @@ export default function SimulationForm() {
           type="button"
           onClick={handlePreview}
           disabled={loading || !formData.customer_name || !formData.product_name || totalAmount <= 0}
-          className="flex-1 bg-gray-200 text-gray-900 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="flex-1 bg-gray-200 text-gray-900 py-3 px-6 rounded font-semibold hover:bg-gray-300 transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
         >
-          👁️ 미리보기
+          미리보기
         </button>
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-gray-900 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="flex-1 bg-gray-900 text-white py-3 px-6 rounded font-semibold hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          {loading ? '발송 중...' : '📱 알림톡 발송하기'}
+          {loading ? '발송 중...' : '알림톡 발송하기'}
         </button>
       </div>
     </form>

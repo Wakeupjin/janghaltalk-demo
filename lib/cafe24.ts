@@ -17,12 +17,6 @@ export interface Cafe24Cart {
   notified_status?: string | null;
   sent_count?: number; // 발송 횟수
   notified_at?: string | null; // 발송 시간
-  // 페르소나 정보
-  customer_grade?: string; // 고객 등급
-  purchase_history_count?: number; // 구매 이력 건수
-  last_purchase_date?: string | null; // 최근 구매일
-  preferred_category?: string; // 선호 카테고리
-  average_order_amount?: number; // 평균 주문 금액
 }
 
 interface CartRestoreResult {
@@ -33,50 +27,37 @@ interface CartRestoreResult {
 }
 
 /**
- * 카페24 장바구니 복원
- * 실제 카페24 Admin API 사용
+ * 카페24 장바구니 복원 URL 생성
+ * 실제 복원 API는 불확실하므로 URL 생성만 수행
  */
 export async function restoreCafe24Cart(
   cartId: number | string,
   mallId?: string,
   accessToken?: string
 ): Promise<CartRestoreResult> {
-  // mallId와 accessToken이 없으면 Mock 모드
-  if (!mallId || !accessToken) {
-    console.log('⚠️  Mock 모드: 카페24 장바구니 복원 시뮬레이션');
-    console.log(`📦 장바구니 ID: ${cartId}`);
+  // mallId가 없으면 Mock 모드
+  if (!mallId) {
+    console.log('Mock 모드: 카페24 장바구니 복원 URL 생성');
+    console.log(`장바구니 ID: ${cartId}`);
     
     return {
       success: true,
-      cart_no: typeof cartId === 'string' ? cartId : `CART_${cartId}_${Date.now()}`,
+      cart_no: typeof cartId === 'string' ? cartId : `CART_${cartId}`,
       orderform_url: `https://${mallId || 'mall'}.cafe24.com/orderform.html?cart_no=${cartId}`,
     };
   }
 
-  try {
-    // 실제 카페24 Admin API 호출
-    const cartNo = typeof cartId === 'string' ? cartId : cartId.toString();
-    const data = await callCafe24API(
-      mallId,
-      accessToken,
-      `/orders/carts/${cartNo}/restore`,
-      {
-        method: 'POST',
-      }
-    );
-    
-    return {
-      success: true,
-      cart_no: data.cart_no || cartNo,
-      orderform_url: `https://${mallId}.cafe24.com/orderform.html?cart_no=${data.cart_no || cartNo}`,
-    };
-  } catch (error: any) {
-    console.error('카페24 장바구니 복원 실패:', error);
-    return {
-      success: false,
-      error: error.message || '장바구니 복원에 실패했습니다.',
-    };
-  }
+  // 실제 복원 API는 불확실하므로 URL 생성만 수행
+  const cartNo = typeof cartId === 'string' ? cartId : cartId.toString();
+  
+  return {
+    success: true,
+    cart_no: cartNo,
+    orderform_url: generateOrderformUrl(mallId, cartNo, {
+      paymentMethod: 'janghaltuk',
+      installmentMonths: 12,
+    }),
+  };
 }
 
 /**
@@ -163,9 +144,6 @@ export async function getCafe24Carts(
     const carts: Cafe24Cart[] = [];
     const total = 80;
     
-    const customerGrades = ['VIP', 'GOLD', 'SILVER', 'BRONZE', '일반'];
-    const categories = ['패션', '뷰티', '홈리빙', '전자제품', '식품', '도서', '스포츠'];
-    
     for (let i = 0; i < total; i++) {
       const randomName = sampleNames[Math.floor(Math.random() * sampleNames.length)];
       const randomProduct = sampleProducts[Math.floor(Math.random() * sampleProducts.length)];
@@ -184,18 +162,6 @@ export async function getCafe24Carts(
       
       const addedAt = new Date();
       addedAt.setHours(addedAt.getHours() - hoursAgo);
-      
-      const customerGrade = customerGrades[Math.floor(Math.random() * customerGrades.length)];
-      const purchaseHistoryCount = Math.floor(Math.random() * 20);
-      const preferredCategory = categories[Math.floor(Math.random() * categories.length)];
-      const averageOrderAmount = Math.floor(Math.random() * 150000) + 50000;
-      
-      let lastPurchaseDate: string | null = null;
-      if (purchaseHistoryCount > 0) {
-        const lastPurchase = new Date();
-        lastPurchase.setDate(lastPurchase.getDate() - Math.floor(Math.random() * 90));
-        lastPurchaseDate = lastPurchase.toISOString();
-      }
       
       let sentCount = 0;
       let notifiedAt: string | undefined = undefined;
@@ -222,11 +188,6 @@ export async function getCafe24Carts(
         added_at: addedAt.toISOString(),
         status: status,
         item_count: Math.floor(Math.random() * 3) + 1,
-        customer_grade: customerGrade,
-        purchase_history_count: purchaseHistoryCount,
-        last_purchase_date: lastPurchaseDate,
-        preferred_category: preferredCategory,
-        average_order_amount: averageOrderAmount,
         sent_count: sentCount,
         notified_at: notifiedAt,
       });
