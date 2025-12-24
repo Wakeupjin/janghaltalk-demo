@@ -104,7 +104,7 @@ export default async function handler(
           cartId,
           alimtalkResult.messageId || null,
           cart.customer_phone,
-          `🎉 특별 혜택 알림 - 월 ${monthlyPayment.toLocaleString()}원으로 시작하는 특별 분할 결제 이벤트`,
+          `[장바구니 안내] - 월 ${monthlyPayment.toLocaleString()}원 분할 결제 옵션 안내`,
           alimtalkResult.success ? 'sent' : 'failed',
           alimtalkResult.error || null
         );

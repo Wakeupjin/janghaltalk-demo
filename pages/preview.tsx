@@ -47,15 +47,15 @@ export default function PreviewPage() {
     );
   }
 
-  // A버전 메시지 (기존 - 할부 느낌)
-  const messageA = `🎉 특별 혜택 알림 🎉\n\n${previewData.customer_name}님, 담아두신 상품이 기다리고 있어요!\n\n✨ 월 ${previewData.monthly_payment.toLocaleString()}원으로 시작하는\n   특별 분할 결제 이벤트 ✨\n\n🔥 지금 구매 시 혜택 🔥\n💳 최대 12개월 완전 무이자\n📦 ${previewData.product_name}\n💰 총 ${previewData.total_amount.toLocaleString()}원\n\n⏰ 한정 시간 특가\n💝 부담 없이 바로 시작하세요!`;
+  // A버전 메시지 (정보성 - 장바구니 안내)
+  const messageA = `[장바구니 안내]\n\n${previewData.customer_name}님, 장바구니에 담아두신 상품이 있습니다.\n\n📦 상품: ${previewData.product_name}\n💰 주문 금액: ${previewData.total_amount.toLocaleString()}원\n\n💳 결제 옵션 안내\n월 ${previewData.monthly_payment.toLocaleString()}원씩 최대 12개월 분할 결제가 가능합니다.\n(무이자 할부 적용)\n\n결제를 진행하시려면 아래 링크를 클릭해주세요.`;
 
-  // B버전 메시지 (새로운 - 세련된 느낌)
-  const messageB = `🎉 특별 혜택 알림 🎉\n\n${previewData.customer_name}님, 담아두신 상품이 기다리고 있어요!\n\n✨ ${previewData.monthly_payment.toLocaleString()}원부터 부담 없이 시작하는\n   특별 결제 혜택 ✨\n\n🔥 지금 구매 시 혜택 🔥\n💳 최대 12개월까지 무이자\n📦 ${previewData.product_name}\n💰 총 ${previewData.total_amount.toLocaleString()}원\n\n⏰ 한정 시간 특가\n💝 지금 바로 시작하세요!`;
+  // B버전 메시지 (정보성 - 주문 안내)
+  const messageB = `[주문 안내]\n\n${previewData.customer_name}님, 장바구니에 담아두신 상품이 있습니다.\n\n📦 상품명: ${previewData.product_name}\n💰 결제 금액: ${previewData.total_amount.toLocaleString()}원\n\n💳 분할 결제 안내\n월 ${previewData.monthly_payment.toLocaleString()}원부터 12개월까지 무이자 할부 결제가 가능합니다.\n\n주문을 완료하시려면 아래 링크를 통해 결제 페이지로 이동해주세요.`;
 
   const currentMessage = version === 'A' ? messageA : messageB;
-  const buttonTextA = `월 ${previewData.monthly_payment.toLocaleString()}원부터 시작`;
-  const buttonTextB = `${previewData.monthly_payment.toLocaleString()}원부터 부담 없이`;
+  const buttonTextA = `결제 페이지로 이동`;
+  const buttonTextB = `주문 완료하기`;
 
   return (
     <>
@@ -224,19 +224,19 @@ export default function PreviewPage() {
                 <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
                   <p className="font-semibold text-gray-900 mb-2">버전 A 특징</p>
                   <ul className="text-gray-600 space-y-1 text-xs">
-                    <li>• "월 XX원으로 시작하는"</li>
-                    <li>• "특별 분할 결제 이벤트"</li>
-                    <li>• "12개월 완전 무이자"</li>
-                    <li>• 할부 느낌 강함</li>
+                    <li>• "[장바구니 안내]" 제목</li>
+                    <li>• "결제 옵션 안내" 형식</li>
+                    <li>• "12개월 분할 결제 가능"</li>
+                    <li>• 정보 제공 중심</li>
                   </ul>
                 </div>
                 <div className="bg-indigo-50 rounded-lg p-4 border border-indigo-100">
                   <p className="font-semibold text-gray-900 mb-2">버전 B 특징</p>
                   <ul className="text-gray-600 space-y-1 text-xs">
-                    <li>• "XX원부터 부담 없이"</li>
-                    <li>• "특별 결제 혜택"</li>
-                    <li>• "12개월까지 무이자"</li>
-                    <li>• 할부 아닌 느낌, 세련됨</li>
+                    <li>• "[주문 안내]" 제목</li>
+                    <li>• "분할 결제 안내" 형식</li>
+                    <li>• "12개월까지 무이자 할부"</li>
+                    <li>• 주문 완료 안내 중심</li>
                   </ul>
                 </div>
               </div>

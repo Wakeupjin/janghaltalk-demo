@@ -45,7 +45,7 @@ export async function sendAlimtalk(
         template_code: templateCode,
         message: {
           object_type: 'text',
-          text: `🎉 특별 혜택 알림 🎉\n\n${customerName}님, 담아두신 상품이 기다리고 있어요!\n\n✨ 월 ${monthlyPayment.toLocaleString()}원으로 시작하는\n   특별 분할 결제 이벤트 ✨\n\n🔥 지금 구매 시 혜택 🔥\n💳 최대 12개월 완전 무이자\n📦 ${productName}\n💰 총 ${totalAmount.toLocaleString()}원\n\n⏰ 한정 시간 특가\n💝 부담 없이 바로 시작하세요!`,
+          text: `[장바구니 안내]\n\n${customerName}님, 장바구니에 담아두신 상품이 있습니다.\n\n📦 상품: ${productName}\n💰 주문 금액: ${totalAmount.toLocaleString()}원\n\n💳 결제 옵션 안내\n월 ${monthlyPayment.toLocaleString()}원씩 최대 12개월 분할 결제가 가능합니다.\n(무이자 할부 적용)\n\n결제를 진행하시려면 아래 링크를 클릭해주세요.`,
           link: {
             web_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment?cart_id=${cartId || ''}`,
             mobile_web_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment?cart_id=${cartId || ''}`,

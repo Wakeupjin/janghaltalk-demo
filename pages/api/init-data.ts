@@ -96,7 +96,7 @@ export default function handler(
           cartId,
           `MSG_${Date.now()}_${i}`,
           `010-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`,
-          `🎉 특별 혜택 알림 - 월 ${randomMonthly.toLocaleString()}원으로 시작하는 특별 분할 결제 이벤트`,
+          `[장바구니 안내] - 월 ${randomMonthly.toLocaleString()}원 분할 결제 옵션 안내`,
           hoursAgo
         );
         totalCreated++;

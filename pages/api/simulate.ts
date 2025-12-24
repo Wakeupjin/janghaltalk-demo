@@ -93,7 +93,7 @@ export default async function handler(
         cartId,
         alimtalkResult.messageId || null,
         customer_phone,
-        `🎉 특별 혜택 알림 - 월 ${monthly_payment.toLocaleString()}원으로 시작하는 특별 분할 결제 이벤트`,
+        `[장바구니 안내] - 월 ${monthly_payment.toLocaleString()}원 분할 결제 옵션 안내`,
         alimtalkResult.success ? 'sent' : 'failed',
         alimtalkResult.error || null
       );
