@@ -41,69 +41,73 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="min-h-screen bg-gray-50">
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
         <div className="container mx-auto px-4 py-8">
+          {/* 헤더 섹션 */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              장할톡
-            </h1>
-            <p className="text-gray-600 mb-2">
-              카페24 쇼핑몰 장바구니 이탈 고객을 토스페이먼츠의{' '}
-              <Link
-                href="https://www.toss.im/payments"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-700 font-semibold underline"
-              >
-                장할특(특별분담장기무이자)
-              </Link>
-              로 전환하는 자동화 마케팅 서비스
-            </p>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span>💳</span>
-              <span>토스페이먼츠 장할특 결제수단 연동</span>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8 border border-white/20">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h1 className="text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
+                    장할톡
+                  </h1>
+                  <p className="text-lg text-gray-700 mb-3 leading-relaxed">
+                    카페24 쇼핑몰 장바구니 이탈 고객을 토스페이먼츠의{' '}
+                    <Link
+                      href="https://www.toss.im/payments"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-700 font-bold underline decoration-2 underline-offset-2 transition-colors"
+                    >
+                      장할특(특별분담장기무이자)
+                    </Link>
+                    로 전환하는 자동화 마케팅 서비스
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-gray-600 bg-blue-50 px-4 py-2 rounded-lg inline-flex">
+                    <span className="text-lg">💳</span>
+                    <span className="font-medium">토스페이먼츠 장할특 결제수단 연동</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* 카페24 연결 상태 표시 */}
           {cafe24Status && (
-            <div className={`mb-6 p-4 rounded-lg border-2 ${
+            <div className={`mb-6 p-6 rounded-2xl shadow-lg border-2 backdrop-blur-sm transition-all duration-300 ${
               cafe24Status.connected
-                ? 'bg-green-50 border-green-200'
-                : 'bg-yellow-50 border-yellow-200'
+                ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300 shadow-green-100'
+                : 'bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-300 shadow-amber-100'
             }`}>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {cafe24Status.connected ? (
-                    <>
-                      <span className="text-2xl">✅</span>
-                      <div>
-                        <p className="font-semibold text-gray-900">
-                          카페24 연결됨
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          쇼핑몰 ID: {cafe24Status.mall_id}
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-2xl">⚠️</span>
-                      <div>
-                        <p className="font-semibold text-gray-900">
-                          카페24 미연결
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          카페24 쇼핑몰을 연결하여 실제 장바구니 데이터를 사용하세요
-                        </p>
-                      </div>
-                    </>
-                  )}
+                <div className="flex items-center gap-4">
+                  <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl ${
+                    cafe24Status.connected
+                      ? 'bg-green-100 text-green-600'
+                      : 'bg-amber-100 text-amber-600'
+                  }`}>
+                    {cafe24Status.connected ? '✅' : '⚠️'}
+                  </div>
+                  <div>
+                    <p className={`text-xl font-bold mb-1 ${
+                      cafe24Status.connected ? 'text-green-900' : 'text-amber-900'
+                    }`}>
+                      {cafe24Status.connected ? '카페24 연결됨' : '카페24 미연결'}
+                    </p>
+                    <p className={`text-sm ${
+                      cafe24Status.connected ? 'text-green-700' : 'text-amber-700'
+                    }`}>
+                      {cafe24Status.connected 
+                        ? `쇼핑몰 ID: ${cafe24Status.mall_id}`
+                        : '카페24 쇼핑몰을 연결하여 실제 장바구니 데이터를 사용하세요'
+                      }
+                    </p>
+                  </div>
                 </div>
                 {!cafe24Status.connected && (
                   <Link
                     href="/api/auth/cafe24/login"
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap"
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 whitespace-nowrap"
                   >
                     🔗 카페24 연결하기
                   </Link>
@@ -112,25 +116,35 @@ export default function Home() {
             </div>
           )}
 
-          <div className="mb-6 flex gap-3 flex-wrap">
-            <Link
-              href="/settings"
-              className="inline-block bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-            >
-              ⚙️ 설정
-            </Link>
+          {/* 액션 버튼 그리드 */}
+          <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Link
               href="/carts"
-              className="inline-block bg-gray-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+              className="group bg-gradient-to-br from-gray-900 to-gray-800 text-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-700"
             >
-              📦 장바구니 목록
+              <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">📦</div>
+              <h3 className="text-xl font-bold mb-1">장바구니 목록</h3>
+              <p className="text-sm text-gray-300">이탈 고객 관리 및 알림톡 발송</p>
             </Link>
+            
+            <Link
+              href="/settings"
+              className="group bg-white text-gray-900 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200"
+            >
+              <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">⚙️</div>
+              <h3 className="text-xl font-bold mb-1">설정</h3>
+              <p className="text-sm text-gray-600">알림톡 발송 설정 관리</p>
+            </Link>
+            
             <Link
               href="/preview?name=홍길동&product=명품가방&amount=240000&monthly=20000"
-              className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+              className="group bg-gradient-to-br from-indigo-600 to-purple-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
             >
-              👁️ 알림톡 A/B 미리보기
+              <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">👁️</div>
+              <h3 className="text-xl font-bold mb-1">A/B 미리보기</h3>
+              <p className="text-sm text-indigo-100">알림톡 메시지 버전 비교</p>
             </Link>
+            
             <button
               onClick={async () => {
                 if (confirm('초기 샘플 데이터를 생성하시겠습니까? (기존 데이터는 유지됩니다)')) {
@@ -148,9 +162,11 @@ export default function Home() {
                   }
                 }
               }}
-              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              className="group bg-gradient-to-br from-blue-600 to-cyan-600 text-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 text-left"
             >
-              📊 샘플 데이터 생성
+              <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">📊</div>
+              <h3 className="text-xl font-bold mb-1">샘플 데이터</h3>
+              <p className="text-sm text-blue-100">테스트용 데이터 생성</p>
             </button>
           </div>
 
