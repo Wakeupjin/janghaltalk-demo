@@ -34,52 +34,41 @@ interface CartRestoreResult {
 
 /**
  * 카페24 장바구니 복원
- * 실제 연동 시 카페24 Admin API 사용
+ * 실제 카페24 Admin API 사용
  */
 export async function restoreCafe24Cart(
-  cartId: number,
+  cartId: number | string,
   mallId?: string,
   accessToken?: string
 ): Promise<CartRestoreResult> {
-  // 실제 카페24 API 연동 전까지는 Mock 응답
+  // mallId와 accessToken이 없으면 Mock 모드
   if (!mallId || !accessToken) {
     console.log('⚠️  Mock 모드: 카페24 장바구니 복원 시뮬레이션');
     console.log(`📦 장바구니 ID: ${cartId}`);
     
-    // Mock 응답 - 실제로는 카페24 API 호출
     return {
       success: true,
-      cart_no: `CART_${cartId}_${Date.now()}`,
-      orderform_url: `https://${mallId || 'mall'}.cafe24.com/orderform.html?cart_no=CART_${cartId}`,
+      cart_no: typeof cartId === 'string' ? cartId : `CART_${cartId}_${Date.now()}`,
+      orderform_url: `https://${mallId || 'mall'}.cafe24.com/orderform.html?cart_no=${cartId}`,
     };
   }
 
   try {
     // 실제 카페24 Admin API 호출
-    // const response = await fetch(
-    //   `https://${mallId}.cafe24.com/api/v2/admin/orders/carts/${cartId}/restore`,
-    //   {
-    //     method: 'POST',
-    //     headers: {
-    //       'Authorization': `Bearer ${accessToken}`,
-    //       'Content-Type': 'application/json',
-    //     },
-    //   }
-    // );
-
-    // const data = await response.json();
+    const cartNo = typeof cartId === 'string' ? cartId : cartId.toString();
+    const data = await callCafe24API(
+      mallId,
+      accessToken,
+      `/orders/carts/${cartNo}/restore`,
+      {
+        method: 'POST',
+      }
+    );
     
-    // return {
-    //   success: true,
-    //   cart_no: data.cart_no,
-    //   orderform_url: `https://${mallId}.cafe24.com/orderform.html?cart_no=${data.cart_no}`,
-    // };
-
-    // 임시 Mock 응답
     return {
       success: true,
-      cart_no: `CART_${cartId}`,
-      orderform_url: `https://${mallId}.cafe24.com/orderform.html?cart_no=CART_${cartId}`,
+      cart_no: data.cart_no || cartNo,
+      orderform_url: `https://${mallId}.cafe24.com/orderform.html?cart_no=${data.cart_no || cartNo}`,
     };
   } catch (error: any) {
     console.error('카페24 장바구니 복원 실패:', error);
@@ -88,6 +77,35 @@ export async function restoreCafe24Cart(
       error: error.message || '장바구니 복원에 실패했습니다.',
     };
   }
+}
+
+/**
+ * 카페24 Admin API 호출 헬퍼 함수
+ */
+async function callCafe24API(
+  mallId: string,
+  accessToken: string,
+  endpoint: string,
+  options?: RequestInit
+): Promise<any> {
+  const url = `https://${mallId}.cafe24api.com/api/v2/admin${endpoint}`;
+  
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      'X-Cafe24-Api-Version': '2022-03-01',
+      ...options?.headers,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: { message: 'API 호출 실패' } }));
+    throw new Error(error.error?.message || `API 호출 실패: ${response.status}`);
+  }
+
+  return response.json();
 }
 
 /**
@@ -120,7 +138,7 @@ export function generateOrderformUrl(
 
 /**
  * 카페24 장바구니 목록 조회
- * 실제 연동 시 카페24 Admin API 사용
+ * 실제 카페24 Admin API 사용
  */
 export async function getCafe24Carts(
   mallId?: string,
@@ -134,29 +152,27 @@ export async function getCafe24Carts(
     hours_ago?: number;
   }
 ): Promise<{ carts: Cafe24Cart[]; total: number }> {
-  // 실제 카페24 API 연동 전까지는 Mock 응답
+  // mallId와 accessToken이 없으면 Mock 모드
   if (!mallId || !accessToken) {
     console.log('⚠️  Mock 모드: 카페24 장바구니 목록 조회');
     
-    // Mock 데이터 생성
+    // Mock 데이터 생성 (기존 코드 유지)
     const sampleNames = ['김철수', '이영희', '박민수', '최지영', '정수진', '한동훈', '오세영', '윤미래', '강민호', '송지은'];
     const sampleProducts = ['의류', '신발', '가방', '액세서리', '화장품', '생활용품', '전자제품', '도서', '스포츠용품', '식품'];
     
     const carts: Cafe24Cart[] = [];
-    const total = 80; // 총 80건
+    const total = 80;
     
-    // 다양한 상태와 조건의 장바구니 생성
     const customerGrades = ['VIP', 'GOLD', 'SILVER', 'BRONZE', '일반'];
     const categories = ['패션', '뷰티', '홈리빙', '전자제품', '식품', '도서', '스포츠'];
     
     for (let i = 0; i < total; i++) {
       const randomName = sampleNames[Math.floor(Math.random() * sampleNames.length)];
       const randomProduct = sampleProducts[Math.floor(Math.random() * sampleProducts.length)];
-      const randomAmount = Math.floor(Math.random() * 200000) + 50000; // 5만원 ~ 25만원
-      const hoursAgo = Math.floor(Math.random() * 168) + 1; // 1-168시간 전 (1주일)
-      const marketingConsent = Math.random() > 0.3; // 70% 동의
+      const randomAmount = Math.floor(Math.random() * 200000) + 50000;
+      const hoursAgo = Math.floor(Math.random() * 168) + 1;
+      const marketingConsent = Math.random() > 0.3;
       
-      // 상태 분포: 60% 이탈, 30% 구매완료, 10% 만료
       let status: 'pending' | 'purchased' | 'expired';
       if (i < total * 0.6) {
         status = 'pending';
@@ -169,40 +185,31 @@ export async function getCafe24Carts(
       const addedAt = new Date();
       addedAt.setHours(addedAt.getHours() - hoursAgo);
       
-      // 페르소나 정보 생성
       const customerGrade = customerGrades[Math.floor(Math.random() * customerGrades.length)];
-      const purchaseHistoryCount = Math.floor(Math.random() * 20); // 0-19건
+      const purchaseHistoryCount = Math.floor(Math.random() * 20);
       const preferredCategory = categories[Math.floor(Math.random() * categories.length)];
-      const averageOrderAmount = Math.floor(Math.random() * 150000) + 50000; // 5만원 ~ 20만원
+      const averageOrderAmount = Math.floor(Math.random() * 150000) + 50000;
       
-      // 최근 구매일 (구매 이력이 있는 경우)
       let lastPurchaseDate: string | null = null;
       if (purchaseHistoryCount > 0) {
         const lastPurchase = new Date();
-        lastPurchase.setDate(lastPurchase.getDate() - Math.floor(Math.random() * 90)); // 최근 90일 내
+        lastPurchase.setDate(lastPurchase.getDate() - Math.floor(Math.random() * 90));
         lastPurchaseDate = lastPurchase.toISOString();
       }
       
-      // 발송 이력 랜덤 생성 (더 현실적으로)
       let sentCount = 0;
       let notifiedAt: string | undefined = undefined;
       
-      if (status === 'pending') {
-        // 이탈 상태: 30% 확률로 발송됨, 발송된 경우 1-2회
-        if (Math.random() < 0.3) {
-          sentCount = Math.floor(Math.random() * 2) + 1; // 1-2회
-          const notifiedTime = new Date(addedAt);
-          notifiedTime.setHours(notifiedTime.getHours() + Math.floor(Math.random() * hoursAgo));
-          notifiedAt = notifiedTime.toISOString();
-        }
-      } else if (status === 'purchased') {
-        // 구매 완료: 70% 확률로 발송됨, 발송된 경우 1-3회
-        if (Math.random() < 0.7) {
-          sentCount = Math.floor(Math.random() * 3) + 1; // 1-3회
-          const notifiedTime = new Date(addedAt);
-          notifiedTime.setHours(notifiedTime.getHours() + Math.floor(Math.random() * hoursAgo));
-          notifiedAt = notifiedTime.toISOString();
-        }
+      if (status === 'pending' && Math.random() < 0.3) {
+        sentCount = Math.floor(Math.random() * 2) + 1;
+        const notifiedTime = new Date(addedAt);
+        notifiedTime.setHours(notifiedTime.getHours() + Math.floor(Math.random() * hoursAgo));
+        notifiedAt = notifiedTime.toISOString();
+      } else if (status === 'purchased' && Math.random() < 0.7) {
+        sentCount = Math.floor(Math.random() * 3) + 1;
+        const notifiedTime = new Date(addedAt);
+        notifiedTime.setHours(notifiedTime.getHours() + Math.floor(Math.random() * hoursAgo));
+        notifiedAt = notifiedTime.toISOString();
       }
 
       carts.push({
@@ -215,19 +222,16 @@ export async function getCafe24Carts(
         added_at: addedAt.toISOString(),
         status: status,
         item_count: Math.floor(Math.random() * 3) + 1,
-        // 페르소나 정보
         customer_grade: customerGrade,
         purchase_history_count: purchaseHistoryCount,
         last_purchase_date: lastPurchaseDate,
         preferred_category: preferredCategory,
         average_order_amount: averageOrderAmount,
-        // 발송 이력 정보
         sent_count: sentCount,
         notified_at: notifiedAt,
       });
     }
     
-    // 필터링 적용
     let filteredCarts = [...carts];
     
     if (options?.status) {
@@ -251,10 +255,8 @@ export async function getCafe24Carts(
       });
     }
     
-    // 정렬: 최신순
     filteredCarts.sort((a, b) => new Date(b.added_at).getTime() - new Date(a.added_at).getTime());
     
-    // 페이지네이션
     const offset = options?.offset || 0;
     const limit = options?.limit || 50;
     const paginatedCarts = filteredCarts.slice(offset, offset + limit);
@@ -265,25 +267,78 @@ export async function getCafe24Carts(
     };
   }
 
+  // 실제 카페24 Admin API 호출
   try {
-    // 실제 카페24 Admin API 호출
-    // const response = await fetch(
-    //   `https://${mallId}.cafe24.com/api/v2/admin/orders/carts?limit=${options?.limit || 50}&offset=${options?.offset || 0}`,
-    //   {
-    //     headers: {
-    //       'Authorization': `Bearer ${accessToken}`,
-    //       'Content-Type': 'application/json',
-    //     },
-    //   }
-    // );
-    // const data = await response.json();
-    // return { carts: data.carts, total: data.total };
+    const params = new URLSearchParams({
+      limit: (options?.limit || 50).toString(),
+      offset: (options?.offset || 0).toString(),
+    });
 
-    // 임시 Mock 응답
-    return { carts: [], total: 0 };
+    const data = await callCafe24API(
+      mallId,
+      accessToken,
+      `/orders/carts?${params.toString()}`
+    );
+
+    // 카페24 API 응답을 Cafe24Cart 형식으로 변환
+    const carts: Cafe24Cart[] = (data.carts || []).map((cart: any) => {
+      // 카페24 API 응답 형식에 맞게 변환
+      const firstItem = cart.items?.[0];
+      const productName = firstItem?.product_name || firstItem?.product_code || '상품명 없음';
+      
+      // 상태 변환: 카페24의 상태를 우리 형식으로
+      let status: 'pending' | 'purchased' | 'expired' = 'pending';
+      if (cart.status === 'purchased' || cart.order_status === 'purchased') {
+        status = 'purchased';
+      } else if (cart.status === 'expired' || cart.order_status === 'expired') {
+        status = 'expired';
+      }
+
+      return {
+        cart_no: cart.cart_no || cart.cart_id || '',
+        customer_name: cart.customer_name || cart.buyer_name || '',
+        customer_phone: cart.customer_phone || cart.buyer_phone || '',
+        marketing_consent: cart.marketing_consent === 'Y' || cart.marketing_consent === true,
+        product_name: productName,
+        total_amount: parseInt(cart.total_amount || cart.total_price || '0', 10),
+        added_at: cart.created_date || cart.added_date || cart.created_at || new Date().toISOString(),
+        status: status,
+        item_count: cart.items?.length || cart.item_count || 0,
+      };
+    });
+
+    // 클라이언트 측 필터링 (API에서 지원하지 않는 필터)
+    let filteredCarts = [...carts];
+    
+    if (options?.status) {
+      filteredCarts = filteredCarts.filter(cart => cart.status === options.status);
+    }
+    
+    if (options?.marketing_consent !== undefined) {
+      filteredCarts = filteredCarts.filter(cart => cart.marketing_consent === options.marketing_consent);
+    }
+    
+    if (options?.min_amount) {
+      filteredCarts = filteredCarts.filter(cart => cart.total_amount >= options.min_amount!);
+    }
+    
+    if (options?.hours_ago) {
+      const cutoffTime = new Date();
+      cutoffTime.setHours(cutoffTime.getHours() - options.hours_ago);
+      filteredCarts = filteredCarts.filter(cart => {
+        const addedAt = new Date(cart.added_at);
+        return addedAt <= cutoffTime;
+      });
+    }
+
+    return {
+      carts: filteredCarts,
+      total: data.total || filteredCarts.length,
+    };
   } catch (error: any) {
     console.error('카페24 장바구니 목록 조회 실패:', error);
-    return { carts: [], total: 0 };
+    // 에러 발생 시 빈 배열 반환 (Mock 모드로 폴백하지 않음)
+    throw error;
   }
 }
 

@@ -1,6 +1,24 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getCafe24Carts } from '@/lib/cafe24';
+import { getValidAccessToken } from '@/lib/cafe24-token';
 import db from '@/lib/db';
+
+/**
+ * 쿠키 파싱 헬퍼 함수
+ */
+function parseCookies(cookieHeader?: string): Record<string, string> {
+  const cookies: Record<string, string> = {};
+  if (!cookieHeader) return cookies;
+  
+  cookieHeader.split(';').forEach((cookie) => {
+    const parts = cookie.split('=');
+    if (parts.length === 2) {
+      cookies[parts[0].trim()] = decodeURIComponent(parts[1].trim());
+    }
+  });
+  
+  return cookies;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,9 +38,20 @@ export default async function handler(
       hours_ago,
     } = req.query;
 
+    // 쿠키에서 mall_id 가져오기
+    const cookieHeader = req.headers.cookie;
+    const cookies = parseCookies(cookieHeader);
+    const mallId = cookies.mall_id || req.cookies?.mall_id;
+
+    // 토큰 가져오기
+    let accessToken: string | null = null;
+    if (mallId) {
+      accessToken = await getValidAccessToken(mallId);
+    }
+
     const result = await getCafe24Carts(
-      undefined, // mallId - 실제 연동 시 세션에서 가져옴
-      undefined, // accessToken - 실제 연동 시 세션에서 가져옴
+      mallId || undefined,
+      accessToken || undefined,
       {
         limit: parseInt(limit as string),
         offset: parseInt(offset as string),

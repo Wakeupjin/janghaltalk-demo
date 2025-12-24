@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { restoreCafe24Cart, generateOrderformUrl } from '@/lib/cafe24';
+import { generateOrderformUrl } from '@/lib/cafe24';
 
 export default function PaymentPage() {
   const router = useRouter();
@@ -23,12 +23,24 @@ export default function PaymentPage() {
       try {
         setStatus('장바구니 복원 중...');
         
-        // 1. 카페24 장바구니 복원
-        const restoreResult = await restoreCafe24Cart(
-          parseInt(cart_id as string),
-          mall_id as string,
-          undefined // 실제 연동 시 accessToken 전달
-        );
+        // 1. 카페24 장바구니 복원 (서버 API를 통해)
+        const restoreResponse = await fetch('/api/carts/restore', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            cart_id: cart_id,
+            cart_no: cart_id, // cart_no도 함께 전달
+          }),
+        });
+
+        if (!restoreResponse.ok) {
+          const errorData = await restoreResponse.json();
+          throw new Error(errorData.error || '장바구니 복원에 실패했습니다.');
+        }
+
+        const restoreResult = await restoreResponse.json();
 
         if (!restoreResult.success) {
           throw new Error(restoreResult.error || '장바구니 복원에 실패했습니다.');
