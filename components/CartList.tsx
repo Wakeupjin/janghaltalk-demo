@@ -217,9 +217,6 @@ export default function CartList({ filters, onSelectionChange, onEstimatedRevenu
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   최근 발송시간
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  고객정보
-                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
